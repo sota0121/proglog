@@ -12,5 +12,19 @@ A distributed commit log service. Ref: "Distributed Services with Go"
 
 ## Usage
 
-...
+```bash
+
+# Start a server
+$ go run cmd/server/main.go
+
+# API test
+# Add a record
+curl -X POST localhost:8080 -d '{"record": {"value": "record0"}}'
+curl -X POST localhost:8080 -d '{"record": {"value": "record1"}}'
+curl -X POST localhost:8080 -d '{"record": {"value": "record2"}}'
+
+# Get a record
+curl -X GET localhost:8080 -d '{"offset": 0}'
+curl -X GET localhost:8080 -d '{"offset": 1}'
+```
 
