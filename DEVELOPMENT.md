@@ -20,3 +20,11 @@ This document is intended to be a guide for developers who want to contribute to
 
 - Install protoc
   - https://grpc.io/docs/protoc-installation/
+- Install protobuff runtime for Go
+  - https://developers.google.com/protocol-buffers/docs/gotutorial
+  - `go install google.golang.org/protobuf/cmd/protoc-gen-go@latest`
+
+
+## Third-party Go packages
+
+See: [go.mod](./go.mod)
