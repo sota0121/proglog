@@ -215,6 +215,7 @@ func (l *Log) Truncate(lowest uint64) error {
 			if err := seg.Remove(); err != nil {
 				return err
 			}
+			continue
 		}
 		segments = append(segments, seg)
 	}
