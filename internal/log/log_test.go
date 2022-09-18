@@ -90,6 +90,7 @@ func testInitExisting(t *testing.T, o *Log) {
 	require.NoError(t, n.Close()) // the new log should be able to close successfully
 }
 
+// testReader tests if the log can be read what it is written in disk.
 func testReader(t *testing.T, log *Log) {
 	append := &api.Record{
 		Value: []byte("hello world"),
@@ -109,6 +110,7 @@ func testReader(t *testing.T, log *Log) {
 	require.NoError(t, log.Close())
 }
 
+// testReader tests it can truncate the old segments from the log.
 func testTruncate(t *testing.T, log *Log) {
 	append := &api.Record{
 		Value: []byte("hello world"),
