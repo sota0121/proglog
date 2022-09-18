@@ -66,7 +66,7 @@ func (s *grpcServer) ProduceStream(stream api.Log_ProduceStreamServer) error {
 
 func (s *grpcServer) ConsumeStream(
 	req *api.ConsumeRequest,
-	stream api.Log_ConsumeStreamServer
+	stream api.Log_ConsumeStreamServer,
 ) error {
 	for {
 		select {
