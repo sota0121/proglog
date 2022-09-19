@@ -23,6 +23,7 @@ This document is intended to be a guide for developers who want to contribute to
 - Install protobuff runtime for Go
   - https://developers.google.com/protocol-buffers/docs/gotutorial
   - `go install google.golang.org/protobuf/cmd/protoc-gen-go@latest`
+  - `go install google.golang.org/protobuf/cmd/protoc-gen-go-grpc@latest`
 
 
 ## Third-party Go packages

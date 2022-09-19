@@ -8,3 +8,30 @@ message Record {
     bytes value = 1;
     uint64 offset = 2;
 }
+
+message ProduceRequest {
+    Record record = 1;
+}
+
+message ProduceResponse {
+    uint64 offset = 1;
+}
+
+message ConsumeRequest {
+    uint64 offset = 1;
+}
+
+message ConsumeResponse {
+    Record record = 1;
+}
+
+service Log {
+    // Produce a record to the log service.
+    rpc Produce(ProduceRequest) returns (ProduceResponse) {}
+    // Consume a record from the log service.
+    rpc Consume(ConsumeRequest) returns (ConsumeResponse) {}
+    // ConsumeStream consumes a stream of records from the log service.
+    rpc ConsumeStream(ConsumeRequest) returns (stream ConsumeResponse) {}
+    // ProduceStream produces a stream of records to the log service with bidirectional streaming.
+    rpc ProduceStream(stream ProduceRequest) returns (stream ProduceResponse) {}
+}
