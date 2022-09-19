@@ -1,6 +1,7 @@
 package server
 
 import (
+	"context"
 	"net"
 	"os"
 	"testing"
@@ -99,6 +100,36 @@ func setupTest(t *testing.T, fn func(*Config)) (
 }
 
 func testProduceConsume(t *testing.T, client, api.LogClient, config *Config) {
+	ctx := context.Background()
+
+	// Arrange
+	want := &api.Record{
+		Value: []byte("hello world"),
+	}
+
+	// Act - produce a message
+	produce, err := client.Produce(
+		ctx,
+		&api.ProduceRequest{
+			Record: want,
+		},
+	)
+	require.NoError(t, err)
+
+	// Arrange - set the offset to the produced message
+	want.Offset = produce.Offset
+
+	// Act - consume the message
+	consume, err := client.Consume(
+		ctx,
+		&api.ConsumeRequest{
+			Offset: produce.Offset,
+		},
+	)
+	// Assert
+	require.NoError(t, err)
+	require.Equal(t, want.Value, consume.Record.Value)
+	require.Equal(t, want.Offset, consume.Record.Offset)
 }
 
 func testProduceConsumeStream(t *testing.T, client, api.LogClient, config *Config) {
