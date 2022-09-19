@@ -18,8 +18,9 @@ type grpcServer struct {
 	*Config
 }
 
-// CommitLog is the interface for this service
-// and this is the Dependency Inversion Principle.
+// CommitLog is the interface for this log service.
+// internal/log/log.go->Log implements this interface.
+// This is the Dependency Inversion Principle.
 type CommitLog interface {
 	Append(*api.Record) (uint64, error)
 	Read(uint64) (*api.Record, error)
