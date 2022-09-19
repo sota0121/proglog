@@ -50,10 +50,12 @@ func testAppendRead(t *testing.T, log *Log) {
 }
 
 func testOutOfRangeErr(t *testing.T, log *Log) {
-	read, err := log.Read(100)      // 100 is an offset that does not exist
-	require.Nil(t, read)            // the record should be nil
-	require.Error(t, err)           // an error should be returned
-	require.NoError(t, log.Close()) // log should be able to close successfully
+	read, err := log.Read(100)                   // 100 is an offset that does not exist
+	require.Nil(t, read)                         // the record should be nil
+	require.Error(t, err)                        // an error should be returned
+	apiErr := err.(api.ErrOffsetOutOfRange)      // get the error as an api error
+	require.Equal(t, uint64(100), apiErr.Offset) // the offset of the error should be 100
+	require.NoError(t, log.Close())              // log should be able to close successfully
 }
 
 func testInitExisting(t *testing.T, o *Log) {
