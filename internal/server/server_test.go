@@ -136,4 +136,26 @@ func testProduceConsumeStream(t *testing.T, client, api.LogClient, config *Confi
 }
 
 func testConsumePastLogBoundary(t *testing.T, client, api.LogClient, config *Config) {
+	ctx := context.Background()
+
+	// Arrange - produce a message
+	produce, err := client.Produce(ctx, &api.ProduceRequest{
+		Record: &api.Record{
+			Value: []byte("hello world"),
+		},
+	})
+	require.NoError(t, err)
+
+	// Act - consume the message which is out of range
+	consume, err := client.Consume(ctx, &api.ConsumeRequest{
+		Offset: produce.Offset + 1,
+	})
+	if consume != nil {
+		t.Fatal("expected consume to be nil")
+	}
+	got := status.Code(err)
+	want := status.Code(api.ErrOffsetOutOfRange{}.GRPCStatus().Err())
+	if got != want {
+		t.Fatalf("got %v, want %v", got, want)
+	}
 }
