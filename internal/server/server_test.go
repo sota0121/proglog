@@ -11,13 +11,14 @@ import (
 	"github.com/stretchr/testify/require"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
+	"google.golang.org/grpc/status"
 )
 
 func TestServer(t *testing.T) {
 	// Create a test scenario table.
 	testMap := map[string]func(
 		t *testing.T,
-		client  api.LogClient,
+		client api.LogClient,
 		config *Config,
 	){
 		"produce/consume a message to/from the log succeeds": testProduceConsume,
@@ -91,15 +92,15 @@ func setupTest(t *testing.T, fn func(*Config)) (
 
 	// Return the client, config, and a teardown function.
 	return client, cfg, func() {
-		cc.Close() // close the client connection
+		cc.Close()    // close the client connection
 		server.Stop() // stop the server
-		l.Close() // close the listener
+		l.Close()     // close the listener
 		clog.Remove() // remove the log directory
 	}
 
 }
 
-func testProduceConsume(t *testing.T, client, api.LogClient, config *Config) {
+func testProduceConsume(t *testing.T, client api.LogClient, config *Config) {
 	ctx := context.Background()
 
 	// Arrange
@@ -132,10 +133,73 @@ func testProduceConsume(t *testing.T, client, api.LogClient, config *Config) {
 	require.Equal(t, want.Offset, consume.Record.Offset)
 }
 
-func testProduceConsumeStream(t *testing.T, client, api.LogClient, config *Config) {
+func testProduceConsumeStream(t *testing.T, client api.LogClient, config *Config) {
+	ctx := context.Background()
+
+	// Arrange
+	wants := []*api.Record{{
+		Value:  []byte("first message"),
+		Offset: 0,
+	}, {
+		Value:  []byte("second message"),
+		Offset: 1,
+	}}
+
+	// Act - produce messages in a stream
+	{
+		// Get a stream to produce messages.
+		stream, err := client.ProduceStream(ctx)
+		require.NoError(t, err)
+
+		// Send messages to the stream.
+		for offset, want := range wants {
+			// Send a message to the stream.
+			err = stream.Send(&api.ProduceRequest{
+				Record: want,
+			})
+			require.NoError(t, err)
+
+			// Receive a response from the stream.
+			res, err := stream.Recv()
+			require.NoError(t, err)
+
+			// Assert - the sending data must be the same as the received data.
+			require.Equal(t, uint64(offset), res.Offset)
+			if res.Offset != uint64(offset) {
+				t.Fatalf(
+					"got offset: %d, want: %d",
+					res.Offset,
+					offset,
+				)
+			}
+		}
+
+	}
+
+	// Act - consume messages in a stream
+	{
+		// Get a stream to consume messages.
+		stream, err := client.ConsumeStream(
+			ctx,
+			&api.ConsumeRequest{Offset: 0},
+		)
+		require.NoError(t, err)
+
+		for offset, want := range wants {
+			// Receive a message from the stream.
+			res, err := stream.Recv()
+			require.NoError(t, err)
+
+			// Assert - the received data must be the same as the sending data.
+			require.Equal(t, res.Record, &api.Record{
+				Value:  want.Value,
+				Offset: uint64(offset),
+			})
+		}
+	}
 }
 
-func testConsumePastLogBoundary(t *testing.T, client, api.LogClient, config *Config) {
+func testConsumePastLogBoundary(t *testing.T, client api.LogClient, config *Config) {
 	ctx := context.Background()
 
 	// Arrange - produce a message
