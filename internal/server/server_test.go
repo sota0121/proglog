@@ -68,7 +68,7 @@ func setupTest(t *testing.T, fn func(*Config)) (
 	clog, err := log.NewLog(dir, log.Config{})
 	require.NoError(t, err)
 
-	cfg := &Config{
+	cfg = &Config{
 		CommitLog: clog,
 	}
 	if fn != nil {
