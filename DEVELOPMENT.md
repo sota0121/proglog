@@ -92,3 +92,37 @@ There are 3 steps to build a secure distributed service.
 上記のような細かいアクセスコントロールをする場合は、**認可が明示的に必要である。**
 
 本リポジトリでは、 Access Control List (ACL) を使って認可を行う。
+
+
+#### Authentication Server with TLS using CFSSL
+
+社内サービスの場合、Certification Authority (CA) ベンダーなどは利用しなくていい。費用もかかるし、複雑になる。
+
+代わりにCloud Flareがオープンソースで提供している **CFSSL** を使う。これにより、独自のCAとして運用できるようになる。
+
+※実際CAベンダーも内部的にはCFSSLを使っている。
+
+CFSSL has 2 main components:
+
+1. **cfssl** - a command line tool for signing, verifying, and bundling TLS certificates. and exporting them in various formats including JSON.
+2. **cfssljson** - a command line tool for splitting a JSON into key, certificate, CSR, and bundle files.
+
+
+#### Step1-1 - Generate a Certificate Authority (CA)
+
+Install Cloud Flare's CFSSL
+
+```bash
+go install github.com/cloudflare/cfssl/cmd/cfssl@latest
+go install github.com/cloudflare/cfssl/cmd/cfssljson@latest
+```
+
+Make a directory for the CA
+
+```bash
+mkdir -p test
+```
+
+Create a CA configuration file
+
+See: [`SecureYourService/test/ca-csr.json`](https://github.com/YoshikiShibata/proglog/blob/main/SecureYourServices/test/ca-csr.json)
