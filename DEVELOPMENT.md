@@ -126,3 +126,25 @@ mkdir -p test
 Create a CA configuration file
 
 See: [`SecureYourService/test/ca-csr.json`](https://github.com/YoshikiShibata/proglog/blob/main/SecureYourServices/test/ca-csr.json)
+
+- `CN` - Common Name
+- `key` - Key type defines the algorithm and key size.
+- `names` - The names list. Each name should have values below:
+  - `C` - Country
+  - `L` - Locality
+  - `ST` - State or Province
+  - `O` - Organization
+  - `OU` - Organizational Unit
+
+
+Create a CA policy file
+
+See: [`SecureYourService/test/ca-config.json`](https://github.com/YoshikiShibata/proglog/blob/main/SecureYourServices/test/ca-config.json)
+
+CA Policy file defines what kind of certificate can be published by the CA.
+
+`signing` section defines the policy for signing certificates such as:
+
+- expiration date (e.g. 8760h = 1 year)
+- usages (e.g. server auth, client auth)
+
