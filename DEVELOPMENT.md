@@ -162,3 +162,7 @@ Create a CA CSR file for server
 See: [`SecureYourService/test/server-csr.json`](https://github.com/YoshikiShibata/proglog/blob/main/SecureYourServices/test/server-csr.json)
 
 - `hosts` - The hosts list. Each host should be a valid DNS name or IP address.
+
+<br>
+
+Finally, add the generating command to Makefile. (See: `./Makefile`)
