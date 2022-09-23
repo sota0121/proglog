@@ -123,6 +123,8 @@ Make a directory for the CA
 mkdir -p test
 ```
 
+<br>
+
 Create a CA configuration file
 
 See: [`SecureYourService/test/ca-csr.json`](https://github.com/YoshikiShibata/proglog/blob/main/SecureYourServices/test/ca-csr.json)
@@ -137,6 +139,11 @@ See: [`SecureYourService/test/ca-csr.json`](https://github.com/YoshikiShibata/pr
   - `OU` - Organizational Unit
 
 
+> **What is a CSR?**
+> See: [CSRファイルとは何でしょうか？ | XTRUST](https://xtrust.jp/support/faq/faq08/a001/)
+
+<br>
+
 Create a CA policy file
 
 See: [`SecureYourService/test/ca-config.json`](https://github.com/YoshikiShibata/proglog/blob/main/SecureYourServices/test/ca-config.json)
@@ -148,3 +155,10 @@ CA Policy file defines what kind of certificate can be published by the CA.
 - expiration date (e.g. 8760h = 1 year)
 - usages (e.g. server auth, client auth)
 
+<br>
+
+Create a CA CSR file for server
+
+See: [`SecureYourService/test/server-csr.json`](https://github.com/YoshikiShibata/proglog/blob/main/SecureYourServices/test/server-csr.json)
+
+- `hosts` - The hosts list. Each host should be a valid DNS name or IP address.
